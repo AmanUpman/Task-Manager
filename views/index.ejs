@@ -17,6 +17,8 @@
 
     <p id="title<%=item.id%>"><%= item.title %></p>
 
+
+    <!--Editing the existing tasks-->
     <form class="edit" action="/edit" method="post">
       <input type="hidden" name="updatedItemId" value="<%= item.id %>" />
       <input
@@ -36,6 +38,7 @@
         />
       </button>
     </form>
+    
     <button
       id="edit<%=item.id%>"
       class="edit"
@@ -50,6 +53,8 @@
   </div>
   <% } %>
 
+
+  <!-- Adding new task-->
   <form class="item" action="/add" method="post">
     <input
       type="text"

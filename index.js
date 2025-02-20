@@ -23,13 +23,15 @@ let items = [
   { id: 2, title: "Finish homework" },
 ];
 
+//Getting all the tasks
 async function getTasks() {
   items = [];
-  const data = await db.query("SELECT * FROM items");
+  const data = await db.query("SELECT * FROM items order by id ASC");
   items = data.rows;
   return items;
 }
 
+//Default landing page
 app.get("/", async (req, res) => {
   const data = await getTasks();
 
@@ -39,15 +41,30 @@ app.get("/", async (req, res) => {
   });
 });
 
-app.post("/add", (req, res) => {
+//Adding new task
+app.post("/add", async (req, res) => {
   const item = req.body.newItem;
-  items.push({ title: item });
+
+  await db.query("INSERT INTO items (title) VALUES ($1)", [item]);
+
   res.redirect("/");
 });
 
-app.post("/edit", (req, res) => {});
+app.post("/edit", async (req, res) => {
+  const data = req.body.updatedItemTitle;
+  const userId = req.body.updatedItemId;
 
-app.post("/delete", (req, res) => {});
+  await db.query("UPDATE items SET title = ($1) WHERE id = $2", [data, userId]);
+
+  res.redirect("/");
+});
+
+app.post("/delete", async (req, res) => {
+  const id = req.body.deleteItemId;
+
+  await db.query("DELETE FROM items WHERE id = $1", [id]);
+  res.redirect("/");
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
